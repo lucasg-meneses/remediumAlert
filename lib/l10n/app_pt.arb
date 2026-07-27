@@ -1,0 +1,43 @@
+{
+  "@@locale": "pt",
+  "addMedication": "Adicionar Medicação",
+  "@addMedication": {
+    "description": "Texto do botão para adicionar uma medicação"
+  },
+  "editMedication": "Editar Medicação",
+  "@editMedication": {
+    "description": "Texto do botão para editar uma medicação"
+  },
+  "medicationDetails": "Detalhes da Medicação",
+  "@medicationDetails": {
+    "description": "Título da tela de detalhes da medicação"
+  },
+  "medicationName": "Nome da Medicação",
+  "@medicationName": {
+    "description": "Rótulo do campo nome da medicação"
+  },
+  "medicationDosage": "Dosagem",
+  "@medicationDosage": {
+    "description": "Quantidade administrada por dose, como comprimidos, cápsulas ou mililitros"
+  },
+  "medicationInterval": "Intervalo entre Doses",
+  "@medicationInterval": {
+    "description": "Tempo entre uma dose e outra"
+  },
+  "save": "Salvar",
+  "@save": {
+    "description": "Texto do botão para salvar a medicação"
+  },
+  "medicationIntervalSuffix": "Hora(s)",
+  "@medicationIntervalSuffix": {
+    "description": "Sufixo para o intervalo entre doses"
+  },
+  "medicationDosageUnit": "Unidade da Dose",
+  "dosageUnitTablet": "Comprimido",
+  "dosageUnitCapsule": "Cápsula",
+  "dosageUnitMl": "mL",
+  "dosageUnitDrop": "Gota",
+  "dosageUnitSpray": "Jato",
+  "dosageUnitSachet": "Sachê",
+  "dosageUnitInjection": "Injeção"
+}
