@@ -55,4 +55,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dosageUnitInjection => 'Injection';
+
+  @override
+  String get medicationDurationEnd => 'Treatment End Date';
+
+  @override
+  String get medicationDurationStart => 'Treatment Start Date';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get now => 'Now';
 }

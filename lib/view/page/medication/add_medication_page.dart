@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:remedium_alert/l10n/app_localizations.dart'
     show AppLocalizations;
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
+    as picker;
+import 'package:remedium_alert/view/component/date_picker_field.dart';
 
 class AddMedicationPage extends StatefulWidget {
   const AddMedicationPage({super.key});
@@ -11,6 +14,9 @@ class AddMedicationPage extends StatefulWidget {
 }
 
 class _AddMedicationPageState extends State<AddMedicationPage> {
+  final medicationDurationStartController = TextEditingController();
+  final medicationDurationEndController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -97,8 +103,23 @@ class _AddMedicationPageState extends State<AddMedicationPage> {
                 labelText: l10n.medicationInterval,
               ),
             ),
+            DatePickerField(
+              titulo: l10n.medicationDurationStart,
+              controller: medicationDurationStartController,
+            ),
+
+            DatePickerField(
+              titulo: l10n.medicationDurationEnd,
+              controller: medicationDurationEndController,
+            ),
+
             Spacer(),
-            FilledButton(onPressed: () {}, child: Text(l10n.save)),
+            FilledButton.icon(
+              onPressed: () {},
+              label: Text(l10n.save),
+              icon: const Icon(Icons.save),
+              iconAlignment: IconAlignment.start,
+            ),
           ],
         ),
       ),

@@ -39,5 +39,11 @@
   "dosageUnitDrop": "Drop",
   "dosageUnitSpray": "Spray",
   "dosageUnitSachet": "Sachet",
-  "dosageUnitInjection": "Injection"
+  "dosageUnitInjection": "Injection",
+
+  "medicationDurationEnd": "Treatment End Date",
+  "medicationDurationStart": "Treatment Start Date",
+  "today": "Today",
+  "now": "Now"
+
 }

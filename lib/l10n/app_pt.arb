@@ -39,5 +39,10 @@
   "dosageUnitDrop": "Gota",
   "dosageUnitSpray": "Jato",
   "dosageUnitSachet": "Sachê",
-  "dosageUnitInjection": "Injeção"
+  "dosageUnitInjection": "Injeção",
+  
+  "medicationDurationEnd": "Data de Término do Tratamento",
+  "medicationDurationStart": "Data Inicial do Tratamento",
+  "today": "Hoje",
+  "now": "Agora"
 }

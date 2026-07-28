@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:remedium_alert/l10n/app_localizations.dart';
-import 'package:remedium_alert/page/medication/add_medication_page.dart' show AddMedicationPage;
+import 'package:remedium_alert/view/page/medication/add_medication_page.dart' show AddMedicationPage;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});

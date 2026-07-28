@@ -193,6 +193,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Injection'**
   String get dosageUnitInjection;
+
+  /// No description provided for @medicationDurationEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Treatment End Date'**
+  String get medicationDurationEnd;
+
+  /// No description provided for @medicationDurationStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Treatment Start Date'**
+  String get medicationDurationStart;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @now.
+  ///
+  /// In en, this message translates to:
+  /// **'Now'**
+  String get now;
 }
 
 class _AppLocalizationsDelegate

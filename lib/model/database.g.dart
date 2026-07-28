@@ -44,32 +44,47 @@ class $MedicationModelTable extends MedicationModel
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _frequencyMeta = const VerificationMeta(
-    'frequency',
+  static const VerificationMeta _medicationDosageMeta = const VerificationMeta(
+    'medicationDosage',
   );
   @override
-  late final GeneratedColumn<int> frequency = GeneratedColumn<int>(
-    'frequency',
+  late final GeneratedColumn<int> medicationDosage = GeneratedColumn<int>(
+    'medication_dosage',
     aliasedName,
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _createdAtMeta = const VerificationMeta(
-    'createdAt',
-  );
+  static const VerificationMeta _medicationDosageUnitMeta =
+      const VerificationMeta('medicationDosageUnit');
   @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-    'created_at',
+  late final GeneratedColumn<String> medicationDosageUnit =
+      GeneratedColumn<String>(
+        'medication_dosage_unit',
+        aliasedName,
+        false,
+        additionalChecks: GeneratedColumn.checkTextLength(
+          minTextLength: 3,
+          maxTextLength: 16,
+        ),
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _endAtMeta = const VerificationMeta('endAt');
+  @override
+  late final GeneratedColumn<DateTime> endAt = GeneratedColumn<DateTime>(
+    'end_at',
     aliasedName,
     true,
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _endAtMeta = const VerificationMeta('endAt');
+  static const VerificationMeta _startAtMeta = const VerificationMeta(
+    'startAt',
+  );
   @override
-  late final GeneratedColumn<DateTime> endAt = GeneratedColumn<DateTime>(
-    'end_at',
+  late final GeneratedColumn<DateTime> startAt = GeneratedColumn<DateTime>(
+    'start_at',
     aliasedName,
     true,
     type: DriftSqlType.dateTime,
@@ -80,9 +95,10 @@ class $MedicationModelTable extends MedicationModel
     id,
     name,
     time,
-    frequency,
-    createdAt,
+    medicationDosage,
+    medicationDosageUnit,
     endAt,
+    startAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -115,24 +131,38 @@ class $MedicationModelTable extends MedicationModel
     } else if (isInserting) {
       context.missing(_timeMeta);
     }
-    if (data.containsKey('frequency')) {
+    if (data.containsKey('medication_dosage')) {
       context.handle(
-        _frequencyMeta,
-        frequency.isAcceptableOrUnknown(data['frequency']!, _frequencyMeta),
+        _medicationDosageMeta,
+        medicationDosage.isAcceptableOrUnknown(
+          data['medication_dosage']!,
+          _medicationDosageMeta,
+        ),
       );
     } else if (isInserting) {
-      context.missing(_frequencyMeta);
+      context.missing(_medicationDosageMeta);
     }
-    if (data.containsKey('created_at')) {
+    if (data.containsKey('medication_dosage_unit')) {
       context.handle(
-        _createdAtMeta,
-        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+        _medicationDosageUnitMeta,
+        medicationDosageUnit.isAcceptableOrUnknown(
+          data['medication_dosage_unit']!,
+          _medicationDosageUnitMeta,
+        ),
       );
+    } else if (isInserting) {
+      context.missing(_medicationDosageUnitMeta);
     }
     if (data.containsKey('end_at')) {
       context.handle(
         _endAtMeta,
         endAt.isAcceptableOrUnknown(data['end_at']!, _endAtMeta),
+      );
+    }
+    if (data.containsKey('start_at')) {
+      context.handle(
+        _startAtMeta,
+        startAt.isAcceptableOrUnknown(data['start_at']!, _startAtMeta),
       );
     }
     return context;
@@ -156,17 +186,21 @@ class $MedicationModelTable extends MedicationModel
         DriftSqlType.int,
         data['${effectivePrefix}time'],
       )!,
-      frequency: attachedDatabase.typeMapping.read(
+      medicationDosage: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}frequency'],
+        data['${effectivePrefix}medication_dosage'],
       )!,
-      createdAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}created_at'],
-      ),
+      medicationDosageUnit: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}medication_dosage_unit'],
+      )!,
       endAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}end_at'],
+      ),
+      startAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}start_at'],
       ),
     );
   }
@@ -182,16 +216,18 @@ class MedicationModelData extends DataClass
   final int id;
   final String name;
   final int time;
-  final int frequency;
-  final DateTime? createdAt;
+  final int medicationDosage;
+  final String medicationDosageUnit;
   final DateTime? endAt;
+  final DateTime? startAt;
   const MedicationModelData({
     required this.id,
     required this.name,
     required this.time,
-    required this.frequency,
-    this.createdAt,
+    required this.medicationDosage,
+    required this.medicationDosageUnit,
     this.endAt,
+    this.startAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -199,12 +235,13 @@ class MedicationModelData extends DataClass
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
     map['time'] = Variable<int>(time);
-    map['frequency'] = Variable<int>(frequency);
-    if (!nullToAbsent || createdAt != null) {
-      map['created_at'] = Variable<DateTime>(createdAt);
-    }
+    map['medication_dosage'] = Variable<int>(medicationDosage);
+    map['medication_dosage_unit'] = Variable<String>(medicationDosageUnit);
     if (!nullToAbsent || endAt != null) {
       map['end_at'] = Variable<DateTime>(endAt);
+    }
+    if (!nullToAbsent || startAt != null) {
+      map['start_at'] = Variable<DateTime>(startAt);
     }
     return map;
   }
@@ -214,13 +251,14 @@ class MedicationModelData extends DataClass
       id: Value(id),
       name: Value(name),
       time: Value(time),
-      frequency: Value(frequency),
-      createdAt: createdAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(createdAt),
+      medicationDosage: Value(medicationDosage),
+      medicationDosageUnit: Value(medicationDosageUnit),
       endAt: endAt == null && nullToAbsent
           ? const Value.absent()
           : Value(endAt),
+      startAt: startAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(startAt),
     );
   }
 
@@ -233,9 +271,12 @@ class MedicationModelData extends DataClass
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       time: serializer.fromJson<int>(json['time']),
-      frequency: serializer.fromJson<int>(json['frequency']),
-      createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
+      medicationDosage: serializer.fromJson<int>(json['medicationDosage']),
+      medicationDosageUnit: serializer.fromJson<String>(
+        json['medicationDosageUnit'],
+      ),
       endAt: serializer.fromJson<DateTime?>(json['endAt']),
+      startAt: serializer.fromJson<DateTime?>(json['startAt']),
     );
   }
   @override
@@ -245,9 +286,10 @@ class MedicationModelData extends DataClass
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
       'time': serializer.toJson<int>(time),
-      'frequency': serializer.toJson<int>(frequency),
-      'createdAt': serializer.toJson<DateTime?>(createdAt),
+      'medicationDosage': serializer.toJson<int>(medicationDosage),
+      'medicationDosageUnit': serializer.toJson<String>(medicationDosageUnit),
       'endAt': serializer.toJson<DateTime?>(endAt),
+      'startAt': serializer.toJson<DateTime?>(startAt),
     };
   }
 
@@ -255,25 +297,32 @@ class MedicationModelData extends DataClass
     int? id,
     String? name,
     int? time,
-    int? frequency,
-    Value<DateTime?> createdAt = const Value.absent(),
+    int? medicationDosage,
+    String? medicationDosageUnit,
     Value<DateTime?> endAt = const Value.absent(),
+    Value<DateTime?> startAt = const Value.absent(),
   }) => MedicationModelData(
     id: id ?? this.id,
     name: name ?? this.name,
     time: time ?? this.time,
-    frequency: frequency ?? this.frequency,
-    createdAt: createdAt.present ? createdAt.value : this.createdAt,
+    medicationDosage: medicationDosage ?? this.medicationDosage,
+    medicationDosageUnit: medicationDosageUnit ?? this.medicationDosageUnit,
     endAt: endAt.present ? endAt.value : this.endAt,
+    startAt: startAt.present ? startAt.value : this.startAt,
   );
   MedicationModelData copyWithCompanion(MedicationModelCompanion data) {
     return MedicationModelData(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
       time: data.time.present ? data.time.value : this.time,
-      frequency: data.frequency.present ? data.frequency.value : this.frequency,
-      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      medicationDosage: data.medicationDosage.present
+          ? data.medicationDosage.value
+          : this.medicationDosage,
+      medicationDosageUnit: data.medicationDosageUnit.present
+          ? data.medicationDosageUnit.value
+          : this.medicationDosageUnit,
       endAt: data.endAt.present ? data.endAt.value : this.endAt,
+      startAt: data.startAt.present ? data.startAt.value : this.startAt,
     );
   }
 
@@ -283,15 +332,24 @@ class MedicationModelData extends DataClass
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('time: $time, ')
-          ..write('frequency: $frequency, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('endAt: $endAt')
+          ..write('medicationDosage: $medicationDosage, ')
+          ..write('medicationDosageUnit: $medicationDosageUnit, ')
+          ..write('endAt: $endAt, ')
+          ..write('startAt: $startAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, time, frequency, createdAt, endAt);
+  int get hashCode => Object.hash(
+    id,
+    name,
+    time,
+    medicationDosage,
+    medicationDosageUnit,
+    endAt,
+    startAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -299,51 +357,59 @@ class MedicationModelData extends DataClass
           other.id == this.id &&
           other.name == this.name &&
           other.time == this.time &&
-          other.frequency == this.frequency &&
-          other.createdAt == this.createdAt &&
-          other.endAt == this.endAt);
+          other.medicationDosage == this.medicationDosage &&
+          other.medicationDosageUnit == this.medicationDosageUnit &&
+          other.endAt == this.endAt &&
+          other.startAt == this.startAt);
 }
 
 class MedicationModelCompanion extends UpdateCompanion<MedicationModelData> {
   final Value<int> id;
   final Value<String> name;
   final Value<int> time;
-  final Value<int> frequency;
-  final Value<DateTime?> createdAt;
+  final Value<int> medicationDosage;
+  final Value<String> medicationDosageUnit;
   final Value<DateTime?> endAt;
+  final Value<DateTime?> startAt;
   const MedicationModelCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.time = const Value.absent(),
-    this.frequency = const Value.absent(),
-    this.createdAt = const Value.absent(),
+    this.medicationDosage = const Value.absent(),
+    this.medicationDosageUnit = const Value.absent(),
     this.endAt = const Value.absent(),
+    this.startAt = const Value.absent(),
   });
   MedicationModelCompanion.insert({
     this.id = const Value.absent(),
     required String name,
     required int time,
-    required int frequency,
-    this.createdAt = const Value.absent(),
+    required int medicationDosage,
+    required String medicationDosageUnit,
     this.endAt = const Value.absent(),
+    this.startAt = const Value.absent(),
   }) : name = Value(name),
        time = Value(time),
-       frequency = Value(frequency);
+       medicationDosage = Value(medicationDosage),
+       medicationDosageUnit = Value(medicationDosageUnit);
   static Insertable<MedicationModelData> custom({
     Expression<int>? id,
     Expression<String>? name,
     Expression<int>? time,
-    Expression<int>? frequency,
-    Expression<DateTime>? createdAt,
+    Expression<int>? medicationDosage,
+    Expression<String>? medicationDosageUnit,
     Expression<DateTime>? endAt,
+    Expression<DateTime>? startAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (time != null) 'time': time,
-      if (frequency != null) 'frequency': frequency,
-      if (createdAt != null) 'created_at': createdAt,
+      if (medicationDosage != null) 'medication_dosage': medicationDosage,
+      if (medicationDosageUnit != null)
+        'medication_dosage_unit': medicationDosageUnit,
       if (endAt != null) 'end_at': endAt,
+      if (startAt != null) 'start_at': startAt,
     });
   }
 
@@ -351,17 +417,19 @@ class MedicationModelCompanion extends UpdateCompanion<MedicationModelData> {
     Value<int>? id,
     Value<String>? name,
     Value<int>? time,
-    Value<int>? frequency,
-    Value<DateTime?>? createdAt,
+    Value<int>? medicationDosage,
+    Value<String>? medicationDosageUnit,
     Value<DateTime?>? endAt,
+    Value<DateTime?>? startAt,
   }) {
     return MedicationModelCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       time: time ?? this.time,
-      frequency: frequency ?? this.frequency,
-      createdAt: createdAt ?? this.createdAt,
+      medicationDosage: medicationDosage ?? this.medicationDosage,
+      medicationDosageUnit: medicationDosageUnit ?? this.medicationDosageUnit,
       endAt: endAt ?? this.endAt,
+      startAt: startAt ?? this.startAt,
     );
   }
 
@@ -377,14 +445,19 @@ class MedicationModelCompanion extends UpdateCompanion<MedicationModelData> {
     if (time.present) {
       map['time'] = Variable<int>(time.value);
     }
-    if (frequency.present) {
-      map['frequency'] = Variable<int>(frequency.value);
+    if (medicationDosage.present) {
+      map['medication_dosage'] = Variable<int>(medicationDosage.value);
     }
-    if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
+    if (medicationDosageUnit.present) {
+      map['medication_dosage_unit'] = Variable<String>(
+        medicationDosageUnit.value,
+      );
     }
     if (endAt.present) {
       map['end_at'] = Variable<DateTime>(endAt.value);
+    }
+    if (startAt.present) {
+      map['start_at'] = Variable<DateTime>(startAt.value);
     }
     return map;
   }
@@ -395,9 +468,10 @@ class MedicationModelCompanion extends UpdateCompanion<MedicationModelData> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('time: $time, ')
-          ..write('frequency: $frequency, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('endAt: $endAt')
+          ..write('medicationDosage: $medicationDosage, ')
+          ..write('medicationDosageUnit: $medicationDosageUnit, ')
+          ..write('endAt: $endAt, ')
+          ..write('startAt: $startAt')
           ..write(')'))
         .toString();
   }
@@ -421,18 +495,20 @@ typedef $$MedicationModelTableCreateCompanionBuilder =
       Value<int> id,
       required String name,
       required int time,
-      required int frequency,
-      Value<DateTime?> createdAt,
+      required int medicationDosage,
+      required String medicationDosageUnit,
       Value<DateTime?> endAt,
+      Value<DateTime?> startAt,
     });
 typedef $$MedicationModelTableUpdateCompanionBuilder =
     MedicationModelCompanion Function({
       Value<int> id,
       Value<String> name,
       Value<int> time,
-      Value<int> frequency,
-      Value<DateTime?> createdAt,
+      Value<int> medicationDosage,
+      Value<String> medicationDosageUnit,
       Value<DateTime?> endAt,
+      Value<DateTime?> startAt,
     });
 
 class $$MedicationModelTableFilterComposer
@@ -459,18 +535,23 @@ class $$MedicationModelTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get frequency => $composableBuilder(
-    column: $table.frequency,
+  ColumnFilters<int> get medicationDosage => $composableBuilder(
+    column: $table.medicationDosage,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
+  ColumnFilters<String> get medicationDosageUnit => $composableBuilder(
+    column: $table.medicationDosageUnit,
     builder: (column) => ColumnFilters(column),
   );
 
   ColumnFilters<DateTime> get endAt => $composableBuilder(
     column: $table.endAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get startAt => $composableBuilder(
+    column: $table.startAt,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -499,18 +580,23 @@ class $$MedicationModelTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get frequency => $composableBuilder(
-    column: $table.frequency,
+  ColumnOrderings<int> get medicationDosage => $composableBuilder(
+    column: $table.medicationDosage,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
+  ColumnOrderings<String> get medicationDosageUnit => $composableBuilder(
+    column: $table.medicationDosageUnit,
     builder: (column) => ColumnOrderings(column),
   );
 
   ColumnOrderings<DateTime> get endAt => $composableBuilder(
     column: $table.endAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get startAt => $composableBuilder(
+    column: $table.startAt,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -533,14 +619,21 @@ class $$MedicationModelTableAnnotationComposer
   GeneratedColumn<int> get time =>
       $composableBuilder(column: $table.time, builder: (column) => column);
 
-  GeneratedColumn<int> get frequency =>
-      $composableBuilder(column: $table.frequency, builder: (column) => column);
+  GeneratedColumn<int> get medicationDosage => $composableBuilder(
+    column: $table.medicationDosage,
+    builder: (column) => column,
+  );
 
-  GeneratedColumn<DateTime> get createdAt =>
-      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+  GeneratedColumn<String> get medicationDosageUnit => $composableBuilder(
+    column: $table.medicationDosageUnit,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<DateTime> get endAt =>
       $composableBuilder(column: $table.endAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get startAt =>
+      $composableBuilder(column: $table.startAt, builder: (column) => column);
 }
 
 class $$MedicationModelTableTableManager
@@ -583,32 +676,36 @@ class $$MedicationModelTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<int> time = const Value.absent(),
-                Value<int> frequency = const Value.absent(),
-                Value<DateTime?> createdAt = const Value.absent(),
+                Value<int> medicationDosage = const Value.absent(),
+                Value<String> medicationDosageUnit = const Value.absent(),
                 Value<DateTime?> endAt = const Value.absent(),
+                Value<DateTime?> startAt = const Value.absent(),
               }) => MedicationModelCompanion(
                 id: id,
                 name: name,
                 time: time,
-                frequency: frequency,
-                createdAt: createdAt,
+                medicationDosage: medicationDosage,
+                medicationDosageUnit: medicationDosageUnit,
                 endAt: endAt,
+                startAt: startAt,
               ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
                 required String name,
                 required int time,
-                required int frequency,
-                Value<DateTime?> createdAt = const Value.absent(),
+                required int medicationDosage,
+                required String medicationDosageUnit,
                 Value<DateTime?> endAt = const Value.absent(),
+                Value<DateTime?> startAt = const Value.absent(),
               }) => MedicationModelCompanion.insert(
                 id: id,
                 name: name,
                 time: time,
-                frequency: frequency,
-                createdAt: createdAt,
+                medicationDosage: medicationDosage,
+                medicationDosageUnit: medicationDosageUnit,
                 endAt: endAt,
+                startAt: startAt,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
