@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:remedium_alert/l10n/app_localizations.dart' show AppLocalizations;
+import 'package:remedium_alert/l10n/app_localizations.dart';
 import 'package:remedium_alert/view/page/home_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'dart:io';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  }
   runApp(const MyApp());
 }
 

@@ -8,7 +8,7 @@ enum DosageUnit {
   drop,
   spray,
   sachet,
-  injection,
+  injection;
 }
 
 extension DosageUnitL10n on DosageUnit {

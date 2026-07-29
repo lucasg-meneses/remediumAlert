@@ -9,8 +9,13 @@ import 'package:remedium_alert/model/repository/medication_repository.dart';
 import 'package:remedium_alert/view/component/date_picker_field.dart';
 
 class AddMedicationPage extends StatefulWidget {
-  const AddMedicationPage({super.key, required this.medicationRepository});
+  AddMedicationPage({
+    super.key,
+    required this.medicationRepository,
+    this.medicationId,
+  });
   final MedicationRepository medicationRepository;
+  late int? medicationId;
 
   @override
   State<AddMedicationPage> createState() => _AddMedicationPageState();
@@ -28,7 +33,11 @@ class _AddMedicationPageState extends State<AddMedicationPage> {
   DateTime medicationDurationStart = DateTime.now();
 
   late bool isContinuousUse = false;
-
+  @override
+  void initState() {
+    super.initState();
+    
+  }
   void _showSnackBar(String info) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -184,7 +193,7 @@ class _AddMedicationPageState extends State<AddMedicationPage> {
                     endAt: medicationDurationEnd,
                   );
                   try {
-                    widget.medicationRepository.inserir(medic);
+                    widget.medicationRepository.insert(medic);
                   } catch (e) {
                     _showSnackBar(l10n.mensageSaveError);
                   }

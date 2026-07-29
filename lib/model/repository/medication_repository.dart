@@ -6,7 +6,7 @@ class MedicationRepository {
   static const String tableName = 'medications';
 
   // Create
-  Future<int> inserir(MedicationModel medication) async {
+  Future<int> insert(MedicationModel medication) async {
     final db = await dbHelper.database;
     final map = medication.toMap();
     map.remove('id'); // deixa o SQLite gerar o id
@@ -14,14 +14,14 @@ class MedicationRepository {
   }
 
   // Read (todos)
-  Future<List<MedicationModel>> buscarTodos() async {
+  Future<List<MedicationModel>> getAll() async {
     final db = await dbHelper.database;
     final result = await db.query(tableName, orderBy: 'start_at');
     return result.map((map) => MedicationModel.fromMap(map)).toList();
   }
 
   // Read (por id)
-  Future<MedicationModel?> buscarPorId(int id) async {
+  Future<MedicationModel?> getById(int id) async {
     final db = await dbHelper.database;
     final maps = await db.query(
       tableName,
@@ -35,7 +35,7 @@ class MedicationRepository {
   }
 
   // Read (somente medicações ativas, sem end_at ou com end_at no futuro)
-  Future<List<MedicationModel>> buscarAtivos() async {
+  Future<List<MedicationModel>> getAllActive() async {
     final db = await dbHelper.database;
     final agora = DateTime.now().toIso8601String();
     final maps = await db.query(
@@ -48,7 +48,7 @@ class MedicationRepository {
   }
 
   // Update
-  Future<int> atualizar(MedicationModel medication) async {
+  Future<int> update(MedicationModel medication) async {
     final db = await dbHelper.database;
     return await db.update(
       tableName,
@@ -59,7 +59,7 @@ class MedicationRepository {
   }
 
   // Delete
-  Future<int> deletar(int id) async {
+  Future<int> delete(int id) async {
     final db = await dbHelper.database;
     return await db.delete(
       tableName,
@@ -69,7 +69,7 @@ class MedicationRepository {
   }
 
   // Delete todos (útil para testes/reset)
-  Future<int> deletarTodos() async {
+  Future<int> deleteAll() async {
     final db = await dbHelper.database;
     return await db.delete(tableName);
   }
