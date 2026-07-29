@@ -1,15 +1,17 @@
-import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:remedium_alert/core/dosage_unit.dart';
 import 'package:remedium_alert/l10n/app_localizations.dart'
     show AppLocalizations;
-import 'package:remedium_alert/model/database.dart';
-import 'package:remedium_alert/model/entity/medication_model.dart' show MedicationModel;
+import 'package:remedium_alert/model/entity/medication_model.dart'
+    show MedicationModel;
+import 'package:remedium_alert/model/repository/medication_repository.dart';
 import 'package:remedium_alert/view/component/date_picker_field.dart';
 
 class AddMedicationPage extends StatefulWidget {
-  const AddMedicationPage({super.key, required this.db});
-  final AppDatabase db;
+  const AddMedicationPage({super.key, required this.medicationRepository});
+  final MedicationRepository medicationRepository;
+
   @override
   State<AddMedicationPage> createState() => _AddMedicationPageState();
 }
@@ -76,44 +78,24 @@ class _AddMedicationPageState extends State<AddMedicationPage> {
                 SizedBox(width: 10),
                 Expanded(
                   flex: 1,
-                  child: DropdownButtonFormField<String>(
+                  child: DropdownButtonFormField<DosageUnit>(
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: l10n.medicationDosageUnit,
                     ),
-                    items: [
-                      DropdownMenuItem(
-                        value: 'tablet',
-                        child: Text(l10n.dosageUnitTablet),
-                      ),
-                      DropdownMenuItem(
-                        value: 'capsule',
-                        child: Text(l10n.dosageUnitCapsule),
-                      ),
-                      DropdownMenuItem(
-                        value: 'ml',
-                        child: Text(l10n.dosageUnitMl),
-                      ),
-                      DropdownMenuItem(
-                        value: 'drop',
-                        child: Text(l10n.dosageUnitDrop),
-                      ),
-                      DropdownMenuItem(
-                        value: 'spray',
-                        child: Text(l10n.dosageUnitSpray),
-                      ),
-                      DropdownMenuItem(
-                        value: 'sachet',
-                        child: Text(l10n.dosageUnitSachet),
-                      ),
-                      DropdownMenuItem(
-                        value: 'injection',
-                        child: Text(l10n.dosageUnitInjection),
-                      ),
-                    ],
+                    items: DosageUnit.values
+                        .map(
+                          (unit) => DropdownMenuItem<DosageUnit>(
+                            value: unit,
+                            child: Text(unit.localizedName(context)),
+                          ),
+                        )
+                        .toList(),
                     onChanged: (value) {
                       setState(() {
-                        medicationDosageUnitController.text = value.toString();
+                        if (value != null) {
+                          medicationDosageUnitController.text = value.name;
+                        }
                       });
                     },
                   ),
@@ -166,45 +148,51 @@ class _AddMedicationPageState extends State<AddMedicationPage> {
                 var medicationDosageUnit = medicationDosageUnitController.text;
                 var medicationInterval = medicationIntervalController.text;
                 var startAt = medicationDurationStart;
-                if (name.isEmpty)
+                if (name.isEmpty) {
                   _showSnackBar(l10n.requiredFieldEmpty(l10n.medicationName));
+                }
 
-                if (medicationDosage.isEmpty)
+                if (medicationDosage.isEmpty) {
                   _showSnackBar(l10n.requiredFieldEmpty(l10n.medicationDosage));
-                if (medicationDosageUnit.isEmpty)
+                }
+                if (medicationDosageUnit.isEmpty) {
                   _showSnackBar(
                     l10n.requiredFieldEmpty(l10n.medicationDosageUnit),
                   );
-                if (medicationInterval.isEmpty)
+                }
+                if (medicationInterval.isEmpty) {
                   _showSnackBar(
                     l10n.requiredFieldEmpty(l10n.medicationInterval),
                   );
-                if (startAt.toString().isEmpty)
+                }
+                if (startAt.toString().isEmpty) {
                   _showSnackBar(
                     l10n.requiredFieldEmpty(l10n.medicationDurationStart),
                   );
+                }
 
                 if (name.isNotEmpty &&
                     medicationInterval.isNotEmpty &&
                     medicationDosageUnit.isNotEmpty &&
                     medicationDosage.isNotEmpty) {
-                 
-                    MedicationModel(
-                      name: name,
-                      medicationDosage: int.parse(medicationDosage),
-                      medicationDosageUnit: medicationDosageUnit,
-                      medicationInterval: int.parse(medicationInterval),
-                      startAt: startAt,
-                      endAt: medicationDurationEnd,
-                    );
-                 
+                  var medic = MedicationModel(
+                    name: name,
+                    medicationDosage: int.parse(medicationDosage),
+                    medicationDosageUnit: medicationDosageUnit,
+                    medicationInterval: int.parse(medicationInterval),
+                    startAt: startAt,
+                    endAt: medicationDurationEnd,
+                  );
+                  try {
+                    widget.medicationRepository.inserir(medic);
+                  } catch (e) {
+                    _showSnackBar(l10n.mensageSaveError);
+                  }
 
                   if (context.mounted) {
                     _showSnackBar(l10n.mensageSavedSuccessfully);
                     Navigator.pop(context);
                   }
-                } else {
-                  _showSnackBar(l10n.mensageSaveError);
                 }
               },
             ),

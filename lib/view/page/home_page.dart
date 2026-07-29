@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:remedium_alert/l10n/app_localizations.dart';
-import 'package:remedium_alert/model/database_helper.dart' show DatabaseHelper;
-
+import 'package:remedium_alert/model/repository/medication_repository.dart';
 import 'package:remedium_alert/view/page/medication/add_medication_page.dart'
     show AddMedicationPage;
 
@@ -9,7 +8,7 @@ class HomePage extends StatefulWidget {
   HomePage({super.key, required this.title});
 
   final String title;
-  final DatabaseHelper db = DatabaseHelper();
+  final MedicationRepository medicationRepository = MedicationRepository();
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -23,10 +22,13 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search)), IconButton(onPressed: () {}, icon: const Icon(Icons.refresh))],
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.refresh)),
+        ],
       ),
       body: StreamBuilder(
-        stream: widget.db.getAllMedications(),
+        stream: widget.medicationRepository.buscarTodos().asStream(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
@@ -51,7 +53,9 @@ class _HomePageState extends State<HomePage> {
             context,
             MaterialPageRoute(
               fullscreenDialog: true,
-              builder: (context) => AddMedicationPage(db: widget.db),
+              builder: (context) => AddMedicationPage(
+                medicationRepository: widget.medicationRepository,
+              ),
             ),
           );
         },

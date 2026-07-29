@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:remedium_alert/l10n/app_localizations.dart' show AppLocalizations;
-import 'package:remedium_alert/model/database.dart' show AppDatabase;
 import 'package:remedium_alert/view/page/home_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
