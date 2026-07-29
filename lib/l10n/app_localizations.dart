@@ -217,6 +217,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Now'**
   String get now;
+
+  /// No description provided for @mensageSavedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved successfully'**
+  String get mensageSavedSuccessfully;
+
+  /// No description provided for @mensageSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred while saving. Please try again.'**
+  String get mensageSaveError;
+
+  /// No description provided for @continuousUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Continuous Use'**
+  String get continuousUse;
+
+  /// Message displayed when a required field is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'The field {field} is required.'**
+  String requiredFieldEmpty(String field);
 }
 
 class _AppLocalizationsDelegate

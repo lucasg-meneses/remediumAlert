@@ -7,11 +7,13 @@ import 'package:remedium_alert/l10n/app_localizations.dart';
 class DatePickerField extends StatefulWidget {
   final String titulo;
   final TextEditingController controller;
+  final ValueChanged<DateTime> onDateSelected;
 
   const DatePickerField({
     super.key,
     required this.titulo,
     required this.controller,
+    required this.onDateSelected
   });
 
   @override
@@ -19,11 +21,9 @@ class DatePickerField extends StatefulWidget {
 }
 
 class _DatePickerFieldState extends State<DatePickerField> {
-  late var l10n;
+  late var l10n = AppLocalizations.of(context)!;
 
   void _selecionarData() {
-    final locale = Localizations.localeOf(context).toString();
-
     picker.DatePicker.showDateTimePicker(
       context,
       theme: picker.DatePickerTheme(
@@ -43,6 +43,7 @@ class _DatePickerFieldState extends State<DatePickerField> {
           : picker.LocaleType.en,
       minTime: DateTime.now(),
       onConfirm: (date) {
+        widget.onDateSelected(date);
         final locale = Localizations.localeOf(context).toString();
         widget.controller.text = DateFormat.yMd(locale).add_Hm().format(date);
       },
@@ -51,7 +52,6 @@ class _DatePickerFieldState extends State<DatePickerField> {
 
   @override
   Widget build(BuildContext context) {
-    l10n = AppLocalizations.of(context)!;
     return TextField(
       controller: widget.controller,
       readOnly: true,

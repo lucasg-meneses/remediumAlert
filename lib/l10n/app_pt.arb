@@ -40,9 +40,21 @@
   "dosageUnitSpray": "Jato",
   "dosageUnitSachet": "Sachê",
   "dosageUnitInjection": "Injeção",
-  
   "medicationDurationEnd": "Data de Término do Tratamento",
   "medicationDurationStart": "Data Inicial do Tratamento",
   "today": "Hoje",
-  "now": "Agora"
+  "now": "Agora",
+  "continuousUse": "Uso contínuo",
+  "mensageSavedSuccessfully": "Salvo com sucesso",
+  "mensageSaveError": "Ocorreu um erro ao salvar. Tente novamente.",
+  "requiredFieldEmpty": "O campo {field} é obrigatório.",
+  "@requiredFieldEmpty": {
+    "description": "Mensagem exibida quando um campo obrigatório está vazio.",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  }
+  
 }

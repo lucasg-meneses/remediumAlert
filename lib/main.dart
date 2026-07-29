@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:remedium_alert/l10n/app_localizations.dart' show AppLocalizations;
+import 'package:remedium_alert/model/database.dart' show AppDatabase;
 import 'package:remedium_alert/view/page/home_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
       ],
       locale: const Locale('pt'),
       supportedLocales: [Locale('pt'), Locale('en')],
-      home: const HomePage(title: 'Remedium Alert'),
+      home: HomePage(title: 'Remedium Alert'),
     );
   }
 }

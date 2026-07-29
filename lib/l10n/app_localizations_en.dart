@@ -67,4 +67,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get now => 'Now';
+
+  @override
+  String get mensageSavedSuccessfully => 'Saved successfully';
+
+  @override
+  String get mensageSaveError =>
+      'An error occurred while saving. Please try again.';
+
+  @override
+  String get continuousUse => 'Continuous Use';
+
+  @override
+  String requiredFieldEmpty(String field) {
+    return 'The field $field is required.';
+  }
 }

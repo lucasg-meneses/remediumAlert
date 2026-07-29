@@ -1,14 +1,15 @@
+import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:remedium_alert/l10n/app_localizations.dart'
     show AppLocalizations;
-import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
-    as picker;
+import 'package:remedium_alert/model/database.dart';
+import 'package:remedium_alert/model/entity/medication_model.dart' show MedicationModel;
 import 'package:remedium_alert/view/component/date_picker_field.dart';
 
 class AddMedicationPage extends StatefulWidget {
-  const AddMedicationPage({super.key});
-
+  const AddMedicationPage({super.key, required this.db});
+  final AppDatabase db;
   @override
   State<AddMedicationPage> createState() => _AddMedicationPageState();
 }
@@ -16,6 +17,29 @@ class AddMedicationPage extends StatefulWidget {
 class _AddMedicationPageState extends State<AddMedicationPage> {
   final medicationDurationStartController = TextEditingController();
   final medicationDurationEndController = TextEditingController();
+  final medicationDosageController = TextEditingController();
+  final medicationNameController = TextEditingController();
+  final medicationIntervalController = TextEditingController();
+  final medicationDosageUnitController = TextEditingController();
+
+  DateTime? medicationDurationEnd;
+  DateTime medicationDurationStart = DateTime.now();
+
+  late bool isContinuousUse = false;
+
+  void _showSnackBar(String info) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(info),
+        action: SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            // Code to execute.
+          },
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +53,7 @@ class _AddMedicationPageState extends State<AddMedicationPage> {
           spacing: 20,
           children: [
             TextField(
+              controller: medicationNameController,
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.medication),
                 border: OutlineInputBorder(),
@@ -40,6 +65,7 @@ class _AddMedicationPageState extends State<AddMedicationPage> {
                 Expanded(
                   flex: 1,
                   child: TextField(
+                    controller: medicationDosageController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.scale),
@@ -86,7 +112,9 @@ class _AddMedicationPageState extends State<AddMedicationPage> {
                       ),
                     ],
                     onChanged: (value) {
-                      // Handle dosage unit selection
+                      setState(() {
+                        medicationDosageUnitController.text = value.toString();
+                      });
                     },
                   ),
                 ),
@@ -95,7 +123,7 @@ class _AddMedicationPageState extends State<AddMedicationPage> {
             TextField(
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-
+              controller: medicationIntervalController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.schedule),
@@ -103,22 +131,82 @@ class _AddMedicationPageState extends State<AddMedicationPage> {
                 labelText: l10n.medicationInterval,
               ),
             ),
+
             DatePickerField(
               titulo: l10n.medicationDurationStart,
               controller: medicationDurationStartController,
+              onDateSelected: (value) => medicationDurationStart = value,
             ),
-
-            DatePickerField(
-              titulo: l10n.medicationDurationEnd,
-              controller: medicationDurationEndController,
+            const SizedBox(height: 10),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(l10n.continuousUse),
+              value: isContinuousUse,
+              onChanged: (value) {
+                setState(() {
+                  isContinuousUse = value;
+                });
+              },
             ),
+            if (!isContinuousUse)
+              DatePickerField(
+                titulo: l10n.medicationDurationEnd,
+                controller: medicationDurationEndController,
+                onDateSelected: (value) => medicationDurationEnd = value,
+              ),
 
             Spacer(),
             FilledButton.icon(
-              onPressed: () {},
               label: Text(l10n.save),
               icon: const Icon(Icons.save),
               iconAlignment: IconAlignment.start,
+              onPressed: () async {
+                var name = medicationNameController.text;
+                var medicationDosage = medicationDosageController.text;
+                var medicationDosageUnit = medicationDosageUnitController.text;
+                var medicationInterval = medicationIntervalController.text;
+                var startAt = medicationDurationStart;
+                if (name.isEmpty)
+                  _showSnackBar(l10n.requiredFieldEmpty(l10n.medicationName));
+
+                if (medicationDosage.isEmpty)
+                  _showSnackBar(l10n.requiredFieldEmpty(l10n.medicationDosage));
+                if (medicationDosageUnit.isEmpty)
+                  _showSnackBar(
+                    l10n.requiredFieldEmpty(l10n.medicationDosageUnit),
+                  );
+                if (medicationInterval.isEmpty)
+                  _showSnackBar(
+                    l10n.requiredFieldEmpty(l10n.medicationInterval),
+                  );
+                if (startAt.toString().isEmpty)
+                  _showSnackBar(
+                    l10n.requiredFieldEmpty(l10n.medicationDurationStart),
+                  );
+
+                if (name.isNotEmpty &&
+                    medicationInterval.isNotEmpty &&
+                    medicationDosageUnit.isNotEmpty &&
+                    medicationDosage.isNotEmpty) {
+                 
+                    MedicationModel(
+                      name: name,
+                      medicationDosage: int.parse(medicationDosage),
+                      medicationDosageUnit: medicationDosageUnit,
+                      medicationInterval: int.parse(medicationInterval),
+                      startAt: startAt,
+                      endAt: medicationDurationEnd,
+                    );
+                 
+
+                  if (context.mounted) {
+                    _showSnackBar(l10n.mensageSavedSuccessfully);
+                    Navigator.pop(context);
+                  }
+                } else {
+                  _showSnackBar(l10n.mensageSaveError);
+                }
+              },
             ),
           ],
         ),

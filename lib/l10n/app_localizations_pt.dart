@@ -67,4 +67,18 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get now => 'Agora';
+
+  @override
+  String get mensageSavedSuccessfully => 'Salvo com sucesso';
+
+  @override
+  String get mensageSaveError => 'Ocorreu um erro ao salvar. Tente novamente.';
+
+  @override
+  String get continuousUse => 'Uso contínuo';
+
+  @override
+  String requiredFieldEmpty(String field) {
+    return 'O campo $field é obrigatório.';
+  }
 }

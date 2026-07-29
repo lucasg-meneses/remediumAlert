@@ -40,10 +40,20 @@
   "dosageUnitSpray": "Spray",
   "dosageUnitSachet": "Sachet",
   "dosageUnitInjection": "Injection",
-
   "medicationDurationEnd": "Treatment End Date",
   "medicationDurationStart": "Treatment Start Date",
   "today": "Today",
-  "now": "Now"
-
+  "now": "Now",
+  "mensageSavedSuccessfully": "Saved successfully",
+  "mensageSaveError": "An error occurred while saving. Please try again.",
+  "continuousUse": "Continuous Use",
+  "requiredFieldEmpty": "The field {field} is required.",
+  "@requiredFieldEmpty": {
+    "description": "Message displayed when a required field is empty.",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  }
 }
