@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:remedium_alert/core/dosage_unit.dart';
+import 'package:remedium_alert/utils/dosage_unit.dart';
 import 'package:remedium_alert/l10n/app_localizations.dart';
 import 'package:remedium_alert/model/entity/medication_model.dart';
 import 'package:remedium_alert/model/repository/medication_repository.dart';
-import 'package:remedium_alert/view/page/medication/add_medication_page.dart'
-    show AddMedicationPage;
+import 'package:remedium_alert/view/pages/medication/medication_page.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({super.key, required this.title});
@@ -62,7 +61,20 @@ class _HomePageState extends State<HomePage> {
                   subtitle: Text(
                     "${it.medicationDosage} ${DosageUnit.values.byName(it.medicationDosageUnit).localizedName(context)}  ${it.medicationInterval} h",
                   ),
-                  onTap: () {},
+                  onTap: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        fullscreenDialog: true,
+                        builder: (context) => MedicationPage(
+                          title: l10n.editMedication,
+                          medicationRepository: widget.medicationRepository,
+                          medication: it,
+                        ),
+                      ),
+                    );
+                    _reload();
+                  },
                 ),
               );
             }).toList(),
@@ -75,7 +87,8 @@ class _HomePageState extends State<HomePage> {
             context,
             MaterialPageRoute(
               fullscreenDialog: true,
-              builder: (context) => AddMedicationPage(
+              builder: (context) => MedicationPage(
+                title: l10n.addMedication,
                 medicationRepository: widget.medicationRepository,
               ),
             ),

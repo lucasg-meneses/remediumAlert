@@ -13,7 +13,7 @@ class DatePickerField extends StatefulWidget {
     super.key,
     required this.titulo,
     required this.controller,
-    required this.onDateSelected
+    required this.onDateSelected,
   });
 
   @override
@@ -22,6 +22,16 @@ class DatePickerField extends StatefulWidget {
 
 class _DatePickerFieldState extends State<DatePickerField> {
   late var l10n = AppLocalizations.of(context)!;
+  DateTime selectedDate = DateTime.now();
+  @override
+  void initState() {
+    super.initState();
+    if (widget.controller.text.isNotEmpty) {
+      widget.onDateSelected(DateTime.parse(widget.controller.text));
+      final locale = Localizations.localeOf(context).toString();
+      widget.controller.text = DateFormat.yMd(locale).add_Hm().format(DateTime.parse(widget.controller.text));
+    }
+  }
 
   void _selecionarData() {
     picker.DatePicker.showDateTimePicker(
@@ -42,6 +52,7 @@ class _DatePickerFieldState extends State<DatePickerField> {
           ? picker.LocaleType.pt
           : picker.LocaleType.en,
       minTime: DateTime.now(),
+      currentTime: selectedDate,
       onConfirm: (date) {
         widget.onDateSelected(date);
         final locale = Localizations.localeOf(context).toString();

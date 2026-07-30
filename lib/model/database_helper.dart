@@ -33,6 +33,7 @@ class DatabaseHelper {
         medication_dosage_unit TEXT NOT NULL,
         medication_interval INTEGER NOT NULL,
         start_at TEXT NOT NULL,
+        medication_last_dosage_at TEXT,
         end_at TEXT
       )
     ''');

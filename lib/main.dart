@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:remedium_alert/l10n/app_localizations.dart';
-import 'package:remedium_alert/view/page/home_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:remedium_alert/view/pages/home_page.dart';
 import 'dart:io';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 

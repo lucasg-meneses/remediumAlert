@@ -4,9 +4,9 @@ class MedicationModel {
   int medicationDosage;
   String medicationDosageUnit;
   int medicationInterval;
+  DateTime? medicationLastDosageAt;
   DateTime? endAt;
   DateTime startAt;
-
 
   MedicationModel({
     this.id,
@@ -16,6 +16,7 @@ class MedicationModel {
     required this.medicationInterval,
     required this.startAt,
     this.endAt,
+    this.medicationLastDosageAt
   });
   factory MedicationModel.fromMap(Map<String, dynamic> map) {
     return MedicationModel(
@@ -25,6 +26,9 @@ class MedicationModel {
       medicationDosageUnit: map['medication_dosage_unit'] as String,
       medicationInterval: map['medication_interval'] as int,
       startAt: DateTime.parse(map['start_at'] as String),
+      medicationLastDosageAt: map['medication_last_dosage_at'] != null
+          ? DateTime.parse(map['medication_last_dosage_at'] as String)
+          : null,
       endAt: map['end_at'] != null
           ? DateTime.parse(map['end_at'] as String)
           : null,
@@ -40,6 +44,7 @@ class MedicationModel {
       'medication_interval': medicationInterval,
       'start_at': startAt.toIso8601String(),
       'end_at': endAt?.toIso8601String(),
+      'medication_last_dosage_at': medicationLastDosageAt?.toIso8601String(),
     };
   }
 }

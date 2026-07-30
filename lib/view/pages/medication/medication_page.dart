@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:remedium_alert/core/dosage_unit.dart';
-import 'package:remedium_alert/l10n/app_localizations.dart'
-    show AppLocalizations;
-import 'package:remedium_alert/model/entity/medication_model.dart'
-    show MedicationModel;
+import 'package:remedium_alert/utils/dosage_unit.dart';
+import 'package:remedium_alert/l10n/app_localizations.dart';
+import 'package:remedium_alert/model/entity/medication_model.dart';
 import 'package:remedium_alert/model/repository/medication_repository.dart';
-import 'package:remedium_alert/view/component/date_picker_field.dart';
+import 'package:remedium_alert/view/widgets/date_picker_field.dart';
 
-class AddMedicationPage extends StatefulWidget {
-  AddMedicationPage({
+class MedicationPage extends StatefulWidget {
+  MedicationPage({
     super.key,
     required this.medicationRepository,
-    this.medicationId,
+    this.medication,
+    required this.title,
   });
+  final String title;
   final MedicationRepository medicationRepository;
-  late int? medicationId;
+  MedicationModel? medication;
 
   @override
-  State<AddMedicationPage> createState() => _AddMedicationPageState();
+  State<MedicationPage> createState() => _MedicationPageState();
 }
 
-class _AddMedicationPageState extends State<AddMedicationPage> {
+class _MedicationPageState extends State<MedicationPage> {
   final medicationDurationStartController = TextEditingController();
   final medicationDurationEndController = TextEditingController();
   final medicationDosageController = TextEditingController();
@@ -31,13 +31,32 @@ class _AddMedicationPageState extends State<AddMedicationPage> {
 
   DateTime? medicationDurationEnd;
   DateTime medicationDurationStart = DateTime.now();
+  DosageUnit? selectedDosageUnit;
 
   late bool isContinuousUse = false;
   @override
   void initState() {
     super.initState();
-    
+    if (widget.medication != null) {
+      medicationNameController.text = widget.medication!.name;
+      medicationIntervalController.text =
+          "${widget.medication!.medicationInterval}";
+      medicationDurationStartController.text = "${widget.medication!.startAt}";
+      medicationDurationStart = widget.medication!.startAt;
+      medicationDurationEndController.text = "${widget.medication!.endAt}";
+      medicationDurationEnd = widget.medication!.endAt;
+      if (medicationDurationEnd == null) {
+        isContinuousUse = true;
+      }
+      medicationDosageUnitController.text =
+          widget.medication!.medicationDosageUnit;
+      medicationDosageController.text =
+          "${widget.medication!.medicationDosage}";
+    } else {
+      medicationDosageUnitController.text = DosageUnit.capsule.name;
+    }
   }
+
   void _showSnackBar(String info) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -56,7 +75,7 @@ class _AddMedicationPageState extends State<AddMedicationPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.addMedication)),
+      appBar: AppBar(title: Text(widget.title)),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         child: Column(
@@ -88,6 +107,9 @@ class _AddMedicationPageState extends State<AddMedicationPage> {
                 Expanded(
                   flex: 1,
                   child: DropdownButtonFormField<DosageUnit>(
+                    initialValue: DosageUnit.values.byName(
+                      medicationDosageUnitController.text,
+                    ),
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: l10n.medicationDosageUnit,
@@ -184,18 +206,35 @@ class _AddMedicationPageState extends State<AddMedicationPage> {
                     medicationInterval.isNotEmpty &&
                     medicationDosageUnit.isNotEmpty &&
                     medicationDosage.isNotEmpty) {
-                  var medic = MedicationModel(
-                    name: name,
-                    medicationDosage: int.parse(medicationDosage),
-                    medicationDosageUnit: medicationDosageUnit,
-                    medicationInterval: int.parse(medicationInterval),
-                    startAt: startAt,
-                    endAt: medicationDurationEnd,
-                  );
-                  try {
-                    widget.medicationRepository.insert(medic);
-                  } catch (e) {
-                    _showSnackBar(l10n.mensageSaveError);
+                  if (widget.medication == null) {
+                    var medic = MedicationModel(
+                      name: name,
+                      medicationDosage: int.parse(medicationDosage),
+                      medicationDosageUnit: medicationDosageUnit,
+                      medicationInterval: int.parse(medicationInterval),
+                      startAt: startAt,
+                      endAt: medicationDurationEnd,
+                    );
+                    try {
+                      widget.medicationRepository.insert(medic);
+                    } catch (e) {
+                      _showSnackBar(l10n.mensageSaveError);
+                    }
+                  }else{
+                     var medic = MedicationModel(
+                      id: widget.medication?.id,
+                      name: name,
+                      medicationDosage: int.parse(medicationDosage),
+                      medicationDosageUnit: medicationDosageUnit,
+                      medicationInterval: int.parse(medicationInterval),
+                      startAt: startAt,
+                      endAt: medicationDurationEnd,
+                    );
+                    try {
+                      widget.medicationRepository.update(medic);
+                    } catch (e) {
+                      _showSnackBar(l10n.mensageSaveError);
+                    }
                   }
 
                   if (context.mounted) {
